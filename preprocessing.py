@@ -120,4 +120,5 @@ def check_filepaths(filepaths, labels):
 if __name__ == '__main__':
     # construct_input(save=True)
     filenames,labels = load_filenames_and_labels()
+    # check_filepaths(filenames, labels)
     get_train_test_filenames_and_labels(filenames, labels)
