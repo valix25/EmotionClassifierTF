@@ -30,6 +30,7 @@ def main():
 
     # 1. Load the filepaths and the labels
     filenames, labels = load_filenames_and_labels()
+    labels[labels == 6] = 5
     train_filepaths, test_filepaths, train_labels, test_labels = get_train_test_filenames_and_labels(filenames, labels)
     classes = list(set(labels))
 
@@ -93,18 +94,19 @@ def main():
     tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
     checkpoint_dir = os.path.join("checkpoints", time_tag)
     os.makedirs(checkpoint_dir)
+    # 'checkpoints/weights.{epoch:02d}-loss_{val_loss:.2f}-acc_{val_acc:0.5f}.hdf5'
     model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-        'checkpoints/weights.{epoch:02d}-loss_{val_loss:.2f}-acc_{val_acc:0.5f}.hdf5', period=1)
+        'checkpoints/weights.{epoch:02d}-acc_{val_accuracy:.5f}.hdf5', monitor='val_accuracy', period=1)
     early_stopping_checkpoint = tf.keras.callbacks.EarlyStopping(patience=5)
 
     # 5. Training the model
     steps_per_epoch = round(train_filepaths.shape[0]) // args.batch_size
-    validations_steps = round(test_filepaths.shape[0]) // args.batch_size
+    validation_steps = round(test_filepaths.shape[0]) // args.batch_size
     print("Steps per epoch: ", steps_per_epoch)
-    print("Validations steps: ", validations_steps)
-    # there is class weight to for balancing
+    print("Validations steps: ", validation_steps)
+    # there is class weight for balancing
     history = model.fit(train_data, epochs=args.epochs, steps_per_epoch=steps_per_epoch,
-                        validation_data=test_data, validations_steps=validations_steps,
+                        validation_data=test_data, validation_steps=validation_steps,
                         callbacks=[model_checkpoint_callback, tensorboard_callback, early_stopping_checkpoint])
 
     history_dir = os.path.join('history', time_tag)
