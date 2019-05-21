@@ -50,10 +50,12 @@ def construct_input(base_path="../Turquino/data/affectNet",
 
     filepaths, labels = reconstruct_full_filepaths(base_path, base_filepaths, base_labels)
     print("Finished reconstructing the full filepaths ...")
+    print("Labels: ", list(set(labels)))
 
     print("\n Original filepaths and labels size: ", len(filepaths), len(labels))
     new_filepaths, new_labels = check_filepaths(filepaths, labels)
     print("\n After filepaths and labels size: ", len(new_filepaths), len(new_labels))
+    print("Labels after: ", list(set(new_labels)))
 
     if save:
         with open(filepaths_save_path, "w") as filepaths_f:
@@ -118,6 +120,6 @@ def check_filepaths(filepaths, labels):
 
 
 if __name__ == '__main__':
-    # construct_input(save=True)
-    filenames,labels = load_filenames_and_labels()
-    get_train_test_filenames_and_labels(filenames, labels)
+    construct_input(save=True)
+    # filenames,labels = load_filenames_and_labels()
+    # get_train_test_filenames_and_labels(filenames, labels)
